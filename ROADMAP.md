@@ -151,3 +151,4 @@ Este roadmap agrupa las funcionalidades que identifiqué que le faltan al admin 
 - Este roadmap asume que el BFF (`titvo-admin-bff-aws`) sigue siendo la única interfaz entre el SPA y el resto del ecosistema.
 - Algunas funcionalidades requieren nuevos endpoints en el BFF; eso se indica en cada ítem.
 - Las funcionalidades de Fase 1 usan datos que ya existen en DynamoDB o en los resultados del agente, por lo que deberían ser implementables sin cambios grandes en backend.
+- Entregado junto con el rediseño del sidebar/dashboard al estilo shadcn `dashboard-01`.
