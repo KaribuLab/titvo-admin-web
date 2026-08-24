@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.png" />
+    <title>Titvo Admin Console</title>
+    <script>
+      // Applies the persisted/system dark-mode class before first paint, so
+      // there's no light-mode flash on a dark-mode reload. Mirrors
+      // src/lib/theme.ts's resolution rule (stored choice wins, else the OS
+      // preference) — kept in sync manually since this runs before any JS
+      // module loads.
+      (function () {
+        try {
+          var stored = window.localStorage.getItem('titvo-theme')
+          var dark = stored === 'dark' || (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+          if (dark) document.documentElement.classList.add('dark')
+        } catch (error) {}
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

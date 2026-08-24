@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * shadcn/ui theme layer — CSS custom properties in the HSL-triplet format
+ * shadcn components expect (`hsl(var(--primary))` etc, wired up in
+ * tailwind.config.js).
+ *
+ * SINGLE SOURCE OF TRUTH: every color below is derived from the same hex
+ * values already defined in `src/styles/tokens.css` (Titvo's real indigo
+ * brand scale, `--titvo-50`...`--titvo-900`, confirmed from titvo.com's
+ * production Tailwind config). This file is the canonical place those hex
+ * values are expressed as HSL for shadcn — `tokens.css` keeps the hex
+ * originals (still consumed by not-yet-migrated pages' old CSS classes) and
+ * must be updated together with this file if the brand palette ever
+ * changes; nothing here invents a new color.
+ *
+ * Light values map 1:1 onto tokens.css's existing semantic assignments
+ * (`--color-bg` -> `--background`, `--color-primary` -> `--primary`, etc).
+ * Dark values keep the SAME hue (~238-244, Titvo indigo) and only adjust
+ * lightness/saturation for a dark surface, per the brand still needing to
+ * read as "Titvo" in dark mode.
+ */
+@layer base {
+  :root {
+    /* Titvo indigo scale, as HSL (converted from tokens.css's hex, do not hand-edit independently) */
+    --titvo-50-hsl: 225.9 100% 96.7%;
+    --titvo-100-hsl: 226.5 100% 93.9%;
+    --titvo-200-hsl: 228 96.5% 88.8%;
+    --titvo-300-hsl: 229.7 93.5% 81.8%;
+    --titvo-400-hsl: 234.5 89.5% 73.9%;
+    --titvo-500-hsl: 238.7 83.5% 66.7%;
+    --titvo-600-hsl: 243.4 75.4% 58.6%;
+    --titvo-700-hsl: 244.5 57.9% 50.6%;
+    --titvo-800-hsl: 243.7 54.5% 41.4%;
+    --titvo-900-hsl: 242.2 47.4% 34.3%;
+
+    --background: 0 0% 98%;
+    --foreground: 240 5.9% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 5.9% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 5.9% 10%;
+
+    --primary: var(--titvo-600-hsl);
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    --accent: var(--titvo-50-hsl);
+    --accent-foreground: var(--titvo-900-hsl);
+
+    --destructive: 0 72.2% 50.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142.4 71.8% 29.2%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 26 90.5% 37.1%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: var(--titvo-400-hsl);
+
+    --radius: 0.625rem;
+
+    /* Sidebar surface (shadcn sidebar block) — a hair darker than --card so the shell reads as a distinct panel */
+    --sidebar-background: 240 4.8% 95.9%;
+    --sidebar-foreground: 240 5.9% 10%;
+    --sidebar-primary: var(--titvo-600-hsl);
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: var(--titvo-50-hsl);
+    --sidebar-accent-foreground: var(--titvo-900-hsl);
+    --sidebar-border: 240 5.9% 90%;
+    --sidebar-ring: var(--titvo-400-hsl);
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 5.9% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 5.9% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: var(--titvo-500-hsl);
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 50.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142.4 60% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 32 90% 55%;
+    --warning-foreground: 240 5.9% 10%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: var(--titvo-400-hsl);
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: var(--titvo-500-hsl);
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: var(--titvo-400-hsl);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
