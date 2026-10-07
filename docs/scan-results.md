@@ -10,8 +10,8 @@ línea, con búsqueda, filtro y paginación. Los resultados AWS que almacenan el
 detalle en HTML muestran `issues_count` y un enlace HTTP(S) a `report_url`.
 Si no hay datos suficientes, se muestra «No registrado».
 
-Integrar primero `titvo-agent-aws/codex/cli-fullscan-aws` y
-`titvo-admin-bff-aws/codex/scan-execution-summary`, luego esta rama.
+Integrar primero `titvo-agent-aws/feat/cli-fullscan-aws` y
+`titvo-admin-bff-aws/feat/scan-execution-summary`, luego esta rama.
 El build productivo sigue usando los endpoints y la autenticación existentes.
 No definir `VITE_TITVO_LAB=true` para producción. El despliegue AWS se hace por
 el mecanismo existente después de integrar las ramas, no al publicarlas.
