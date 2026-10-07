@@ -1,7 +1,10 @@
+import i18n from '../i18n/config'
 export type ScanStatusTone = 'success' | 'in-progress' | 'failed' | 'timeout' | 'neutral'
 
 const TONE_BY_STATUS: Record<string, ScanStatusTone> = {
   SUCCESS: 'success',
+  COMPLETED: 'success',
+  INCOMPLETE: 'timeout',
   IN_PROGRESS: 'in-progress',
   FAILED: 'failed',
   TIMEOUT: 'timeout'
@@ -10,18 +13,19 @@ const TONE_BY_STATUS: Record<string, ScanStatusTone> = {
 /**
  * Scan status is an open string owned by the scanning pipeline (see
  * `ScanStatus` in the BFF's `core/scan/scan.entity.ts` — this client never
- * validates, renames, or maps it to a fixed enum). Known values get a
+ * validates, renames, or maps it to a fixed enum). Optional measured execution
+ * takes precedence in the display without replacing the original status. Known values get a
  * distinct badge tone (spec: Scan Status Fidelity); anything else still
  * renders with its own raw text via `scanStatusLabel`, just with a neutral
  * tone, so an unrecognized future status never crashes or disappears.
  */
-export function scanStatusTone (status: string): ScanStatusTone {
-  return TONE_BY_STATUS[status] ?? 'neutral'
+export function scanStatusTone (status: string, executionStatus?: string): ScanStatusTone {
+  return TONE_BY_STATUS[executionStatus ?? status] ?? 'neutral'
 }
 
-/** Never collapses to "unknown" (spec: Scan Status Fidelity) — always the raw status, underscores replaced with spaces for readability. */
-export function scanStatusLabel (status: string): string {
-  return status.replace(/_/g, ' ')
+/** Translate explicit execution; preserve raw evaluation when execution is unavailable. */
+export function scanStatusLabel (status: string, executionStatus?: string): string {
+  return executionStatus !== undefined ? i18n.t(`analysis.execution${executionStatus}`, { defaultValue: executionStatus.replace(/_/g, ' ') }) : status.replace(/_/g, ' ')
 }
 
 const ACCENT_VAR_BY_TONE: Record<ScanStatusTone, string> = {

@@ -2,6 +2,13 @@ import { describe, it, expect } from 'vitest'
 import { scanStatusTone, scanStatusLabel, scanStatusBadgeVariant } from '../../src/lib/scanStatus'
 
 describe('scanStatus', () => {
+  it('uses measured execution while preserving raw evaluation when absent', () => {
+    expect(scanStatusTone('FAILED', 'COMPLETED')).toBe('success')
+    expect(scanStatusLabel('FAILED', 'COMPLETED')).toMatch(/Completed|Completado/)
+    expect(scanStatusTone('FAILED', 'INCOMPLETE')).toBe('timeout')
+    expect(scanStatusLabel('FAILED', 'INCOMPLETE')).toMatch(/Incomplete|Incompleto/)
+    expect(scanStatusLabel('FAILED')).toBe('FAILED')
+  })
   describe('scanStatusTone', () => {
     it('maps SUCCESS to the success tone', () => {
       expect(scanStatusTone('SUCCESS')).toBe('success')
