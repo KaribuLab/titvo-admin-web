@@ -52,7 +52,8 @@ interface DashboardData {
  * that (spec: derive 'most recent scan across repos' from real data).
  */
 async function loadDashboardData (): Promise<DashboardData> {
-  const [repos, keys, users] = await Promise.all([listRepos(), listApiKeys(), listUsers()])
+  const lab = import.meta.env.VITE_TITVO_LAB === 'true'
+  const [repos, keys, users] = await Promise.all([listRepos(), lab ? Promise.resolve([]) : listApiKeys(), lab ? Promise.resolve([]) : listUsers()])
   const scanLists = await Promise.all(repos.map(async repo => await listScansForRepo(repo.repositoryId)))
 
   const scansByRepo: Record<string, ScanSummary[]> = {}
@@ -85,8 +86,8 @@ function repoDisplayName (repo: RepoListItem): string {
 
 function RepoTile ({ repo }: { repo: RepoListItem }): React.ReactElement {
   const { t } = useTranslation()
-  const tone = repo.lastScan === null ? 'neutral' : scanStatusTone(repo.lastScan.status)
-  const label = repo.lastScan === null ? t('dashboard.neverScanned') : scanStatusLabel(repo.lastScan.status)
+  const tone = repo.lastScan === null ? 'neutral' : scanStatusTone(repo.lastScan.status, repo.lastScan.executionStatus)
+  const label = repo.lastScan === null ? t('dashboard.neverScanned') : scanStatusLabel(repo.lastScan.status, repo.lastScan.executionStatus)
   const href = repo.lastScan === null ? '/repos' : `/scans/${encodeURIComponent(repo.lastScan.scanId)}`
 
   return (
@@ -229,27 +230,31 @@ function SectionCards ({ data, loading }: { data: DashboardData | null, loading:
         </CardContent>
       </DashboardCard>
 
-      <DashboardCard index={2}>
-        <CardHeader className='flex flex-row items-center justify-between pb-2'>
-          <CardDescription>{t('dashboard.apiKeysLabel')}</CardDescription>
-          <KeyRound className='h-4 w-4 text-muted-foreground' aria-hidden='true' />
-        </CardHeader>
-        <CardContent>
-          <CardTitle className='text-3xl font-bold'>{data.keyStats.active + data.keyStats.revoked}</CardTitle>
-          <p className='text-xs text-muted-foreground'>{t('dashboard.active')} {data.keyStats.active}</p>
-        </CardContent>
-      </DashboardCard>
+      {import.meta.env.VITE_TITVO_LAB !== 'true' && (
+        <DashboardCard index={2}>
+          <CardHeader className='flex flex-row items-center justify-between pb-2'>
+            <CardDescription>{t('dashboard.apiKeysLabel')}</CardDescription>
+            <KeyRound className='h-4 w-4 text-muted-foreground' aria-hidden='true' />
+          </CardHeader>
+          <CardContent>
+            <CardTitle className='text-3xl font-bold'>{data.keyStats.active + data.keyStats.revoked}</CardTitle>
+            <p className='text-xs text-muted-foreground'>{t('dashboard.active')} {data.keyStats.active}</p>
+          </CardContent>
+        </DashboardCard>
+      )}
 
-      <DashboardCard index={3}>
-        <CardHeader className='flex flex-row items-center justify-between pb-2'>
-          <CardDescription>{t('dashboard.usersLabel')}</CardDescription>
-          <Users className='h-4 w-4 text-muted-foreground' aria-hidden='true' />
-        </CardHeader>
-        <CardContent>
-          <CardTitle className='text-3xl font-bold'>{data.userStats.admin + data.userStats.member}</CardTitle>
-          <p className='text-xs text-muted-foreground'>{t('dashboard.admins')} {data.userStats.admin}</p>
-        </CardContent>
-      </DashboardCard>
+      {import.meta.env.VITE_TITVO_LAB !== 'true' && (
+        <DashboardCard index={3}>
+          <CardHeader className='flex flex-row items-center justify-between pb-2'>
+            <CardDescription>{t('dashboard.usersLabel')}</CardDescription>
+            <Users className='h-4 w-4 text-muted-foreground' aria-hidden='true' />
+          </CardHeader>
+          <CardContent>
+            <CardTitle className='text-3xl font-bold'>{data.userStats.admin + data.userStats.member}</CardTitle>
+            <p className='text-xs text-muted-foreground'>{t('dashboard.admins')} {data.userStats.admin}</p>
+          </CardContent>
+        </DashboardCard>
+      )}
     </div>
   )
 }
@@ -298,8 +303,8 @@ function LatestScanCard ({ latest, index }: { latest: RepoScanEntry | null, inde
         {latest !== null && (
           <div className='flex flex-col gap-2'>
             <span className='truncate text-sm font-medium'>{repoDisplayName(latest.repo)}</span>
-            <Badge variant={scanStatusBadgeVariant(scanStatusTone(latest.scan.status))} className='w-fit'>
-              {scanStatusLabel(latest.scan.status)}
+            <Badge variant={scanStatusBadgeVariant(scanStatusTone(latest.scan.status, latest.scan.executionStatus))} className='w-fit'>
+              {scanStatusLabel(latest.scan.status, latest.scan.executionStatus)}
             </Badge>
             <Link to={`/scans/${encodeURIComponent(latest.scan.scanId)}`} className='mt-2 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline'>
               {t('dashboard.view')} <ChevronRight className='h-3.5 w-3.5' aria-hidden='true' />

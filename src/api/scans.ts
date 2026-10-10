@@ -4,6 +4,7 @@ import { apiFetch } from './client'
 export interface ScanSummary {
   scanId: string
   status: string
+  executionStatus?: string
   source?: string
   branch?: string
   createdAt?: string
@@ -19,6 +20,7 @@ export interface ScanDetail extends ScanSummary {
 interface ScanSummaryWire {
   scan_id: string
   status: string
+  execution_status?: string | null
   source?: string
   branch?: string
   created_at?: string
@@ -39,6 +41,7 @@ export function toScanSummary (wire: ScanSummaryWire): ScanSummary {
   return {
     scanId: wire.scan_id,
     status: wire.status,
+    executionStatus: wire.execution_status ?? undefined,
     source: wire.source,
     branch: wire.branch,
     createdAt: wire.created_at,

@@ -27,7 +27,7 @@ export function aggregateScanStats (scans: ScanSummary[]): ScanStats {
   let failed = 0
 
   for (const scan of scans) {
-    const tone = scanStatusTone(scan.status)
+    const tone = scanStatusTone(scan.status, scan.executionStatus)
     if (tone === 'success') success++
     else if (tone === 'in-progress') inProgress++
     else if (tone === 'failed') failed++

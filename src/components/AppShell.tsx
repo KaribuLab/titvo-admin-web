@@ -56,6 +56,12 @@ export function AppShell ({ children }: AppShellProps): React.ReactElement {
               animate={{ opacity: 1, y: 0 }}
               transition={reducedMotion ? reducedMotionTransition : springSmooth}
             >
+              {import.meta.env.VITE_TITVO_LAB === 'true' && (
+                <div className='mb-5 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm'>
+                  {t('analysis.labDescription')} <code>titvo scan</code> · {t('analysis.labRefresh')}
+                  <p className='mt-1 text-xs text-muted-foreground'>{t('analysis.statusExplanation')}</p>
+                </div>
+              )}
               {children}
             </motion.main>
           </SidebarInset>

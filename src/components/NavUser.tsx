@@ -85,7 +85,7 @@ export function NavUser ({ user, roleLabel, onLogout }: NavUserProps): React.Rea
               </DropdownMenuLabel>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => { void onLogout() }}>
+            <DropdownMenuItem disabled={import.meta.env.VITE_TITVO_LAB === 'true'} onSelect={() => { void onLogout() }}>
               <LogOut className='mr-2 h-4 w-4' aria-hidden='true' />
               {t('sidebar.logOut')}
             </DropdownMenuItem>

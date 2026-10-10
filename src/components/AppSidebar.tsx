@@ -101,8 +101,12 @@ export function AppSidebar (): React.ReactElement {
 
       <SidebarContent>
         <NavGroup label={t('sidebar.platform')} items={PLATFORM_ITEMS} />
-        <SidebarSeparator />
-        <NavGroup label={t('sidebar.administration')} items={ADMIN_ITEMS} />
+        {import.meta.env.VITE_TITVO_LAB !== 'true' && (
+          <>
+            <SidebarSeparator />
+            <NavGroup label={t('sidebar.administration')} items={ADMIN_ITEMS} />
+          </>
+        )}
       </SidebarContent>
 
       <SidebarFooter>

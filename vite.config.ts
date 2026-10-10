@@ -13,12 +13,13 @@ export default defineConfig({
     // In production, CloudFront routes /api/* to the BFF's API Gateway
     // origin so the browser sees one same-origin surface (see design.md
     // and bff-auth-routing-decision). This proxy reproduces that locally:
-    // matches the BFF's default local PORT (see .env.local.example there
-    // — change both together if you run the BFF on a different port).
+    // Default: BFF port 3001. The explicit laboratory launcher overrides
+    // only this server-side target; no backend credentials enter the bundle.
+    cors: process.env.VITE_TITVO_LAB === 'true' ? { origin: /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/ } : undefined,
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
-        changeOrigin: true
+        target: process.env.TITVO_DEV_API_URL ?? 'http://localhost:3001',
+        changeOrigin: process.env.VITE_TITVO_LAB !== 'true'
       }
     }
   },

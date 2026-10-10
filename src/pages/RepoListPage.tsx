@@ -252,8 +252,8 @@ export function RepoListPage (): React.ReactElement {
                           ? <Badge variant="secondary">{t('repos.neverScanned')}</Badge>
                           : (
                             <Link to={`/scans/${encodeURIComponent(repo.lastScan.scanId)}`}>
-                              <Badge variant={scanStatusBadgeVariant(scanStatusTone(repo.lastScan.status))}>
-                                {scanStatusLabel(repo.lastScan.status)}
+                              <Badge variant={scanStatusBadgeVariant(scanStatusTone(repo.lastScan.status, repo.lastScan.executionStatus))}>
+                                {scanStatusLabel(repo.lastScan.status, repo.lastScan.executionStatus)}
                               </Badge>
                             </Link>
                             )}
@@ -300,8 +300,8 @@ export function RepoListPage (): React.ReactElement {
                               {repoHistory.map(scan => (
                                 <li key={scan.scanId} className="flex items-center gap-3">
                                   <Link to={`/scans/${encodeURIComponent(scan.scanId)}`}>
-                                    <Badge variant={scanStatusBadgeVariant(scanStatusTone(scan.status))}>
-                                      {scanStatusLabel(scan.status)}
+                                    <Badge variant={scanStatusBadgeVariant(scanStatusTone(scan.status, scan.executionStatus))}>
+                                      {scanStatusLabel(scan.status, scan.executionStatus)}
                                     </Badge>
                                   </Link>
                                   <span className="text-sm text-muted-foreground">{scan.createdAt ?? '—'}</span>
