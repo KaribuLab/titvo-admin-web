@@ -1,0 +1,73 @@
+name: Deploy admin web to AWS
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Configured GitHub environment (approval and target variables)
+        type: environment
+        required: true
+
+permissions: {}
+
+# Serialize across environments too: two environments might share a state/bucket.
+concurrency:
+  group: admin-web-aws-deployment
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      AWS_STAGE: ${{ vars.AWS_STAGE }}
+      AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
+      AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+      AWS_EC2_METADATA_DISABLED: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate explicit target before authentication
+        run: bash scripts/deploy-aws.sh preflight
+      - uses: actions/setup-node@v4
+        with:
+          # The existing npm test NODE_OPTIONS flag requires modern Node.
+          node-version: "24.21.0"
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Offline deployment contracts
+        run: node --test test/deployment/offline.mjs
+      - name: Test
+        run: npm test
+      - name: Build
+        run: npm run build
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+          terraform_wrapper: false
+      - name: Install pinned Terragrunt
+        env:
+          TG_VERSION: "0.69.1"
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          base="https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}"
+          curl --fail --silent --show-error --location "$base/terragrunt_linux_amd64" -o terragrunt_linux_amd64
+          curl --fail --silent --show-error --location "$base/SHA256SUMS" -o SHA256SUMS
+          grep ' terragrunt_linux_amd64$' SHA256SUMS | sha256sum --check --strict
+          install -m 0755 terragrunt_linux_amd64 /usr/local/bin/terragrunt
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          allowed-account-ids: ${{ env.AWS_ACCOUNT_ID }}
+          unset-current-credentials: true
+          role-session-name: admin-web-${{ github.run_id }}
+      - name: Apply existing infrastructure and publish (Deployment summary)
+        run: bash scripts/deploy-aws.sh deploy
