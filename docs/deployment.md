@@ -22,6 +22,11 @@ Configure these **GitHub environment variables** (no guessed target defaults):
 | --- | --- |
 | `AWS_REGION` | Explicit commercial AWS region, for example a region shaped `us-east-2`; choose the actual target, not this example. |
 | `AWS_STAGE` | `test` or `prod`, matching the existing stage configuration and SSM prerequisite. LocalStack is not an AWS deployment target. |
+
+Configure these **GitHub environment secrets**:
+
+| Secret | Required value |
+| --- | --- |
 | `AWS_ACCOUNT_ID` | Target's 12-digit account ID. |
 | `AWS_ROLE_ARN` | `arn:aws:iam::<same-account>:role/<deployment-role>`; role paths supported. |
 
